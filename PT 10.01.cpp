@@ -1,12 +1,11 @@
-#include <iostream>
 #include <string>
+#include <iostream>
 #include "binaerer_suchbaum.h"
 using namespace std;
-//using namespace fluchbaeumle;
 
 int main()
 {
-	fluchbaeumle::BaumKot *anker = nullptr;
+	BaumKot *anker = nullptr;
 	do
 	{
 		int eingabe = 0;
@@ -18,12 +17,11 @@ int main()
 		}
 		else
 		{
-			fluchbaeumle::einfuegen(anker, eingabe);
+			einfuegen(anker, eingabe);
 		}
-	}
-	while (true);
+	} while (true);
 
-	fluchbaeumle::ausgabe(anker);
+	ausgabe(anker);
 
 	system("PAUSE");
 	return 0;

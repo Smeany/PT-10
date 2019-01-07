@@ -1,124 +1,89 @@
-//#include "binaerer_suchbaum.h"
 #include <iostream>
+#include "binaerer_suchbaum.h"
 
-namespace fluchbaeumle
+void einfuegen(BaumKot *&anker, int wert)
 {
-	struct BaumKot
+	BaumKot *ptr = anker;
+	if (anker == nullptr)	//falls liste leer, füge neuen wert hinzu
 	{
-		int data;
-		BaumKot *vater;
-		BaumKot *kleinerbruder;
-		BaumKot *grosserbruder; //skurr
-	};
-
-	void einfuegen(BaumKot *&anker, int wert)
+		BaumKot *neuer_eintrag = new BaumKot;
+		neuer_eintrag->vater = nullptr;
+		neuer_eintrag->data = wert;
+		neuer_eintrag->kleinerbruder = nullptr;
+		neuer_eintrag->grosserbruder = nullptr;
+		anker = neuer_eintrag;
+	}
+	else if (ptr->data == wert)
 	{
-		BaumKot *ptr = anker;
-		if (anker == nullptr)	//falls liste leer, füge neuen wert hinzu
+		return;
+	}
+	else if (ptr->data > wert)
+	{
+		if (ptr->kleinerbruder != nullptr)
+		{
+			einfuegen(ptr->kleinerbruder, wert);
+		}
+		else
 		{
 			BaumKot *neuer_eintrag = new BaumKot;
-			neuer_eintrag->vater = nullptr;
+			neuer_eintrag->vater = ptr;
 			neuer_eintrag->data = wert;
 			neuer_eintrag->kleinerbruder = nullptr;
 			neuer_eintrag->grosserbruder = nullptr;
-			anker = neuer_eintrag;
-		}
-		else if (ptr->data == wert)
-		{
-			return;
-		}
-		else if (ptr->data > wert)
-		{
-			if (ptr->kleinerbruder != nullptr)
-			{
-				einfuegen(ptr->kleinerbruder, wert);
-			}
-			else
-			{
-				BaumKot *neuer_eintrag = new BaumKot;
-				neuer_eintrag->vater = ptr;
-				neuer_eintrag->data = wert;
-				neuer_eintrag->kleinerbruder = nullptr;
-				neuer_eintrag->grosserbruder = nullptr;
-				ptr->kleinerbruder = neuer_eintrag;
-			}
-		}
-		else if (ptr->data < wert)
-		{
-			if (ptr->grosserbruder != nullptr)
-			{
-				einfuegen(ptr->grosserbruder, wert);
-			}
-			else
-			{
-				BaumKot *neuer_eintrag = new BaumKot;
-				neuer_eintrag->vater = ptr;
-				neuer_eintrag->data = wert;
-				neuer_eintrag->kleinerbruder = nullptr;
-				neuer_eintrag->grosserbruder = nullptr;
-				ptr->grosserbruder = neuer_eintrag;
-			}
+			ptr->kleinerbruder = neuer_eintrag;
 		}
 	}
-
-	//void ausgabe(BaumKot *&anker)
-	//{
-	//	int tiefe = 0;
-	//	BaumKot *ptr = anker;
-	//	if (anker == nullptr)
-	//	{
-	//		std::cout << "Leerer Baum." << std::endl;
-	//	}
-	//	else
-	//	{
-	//		while (ptr->grosserbruder != nullptr)
-	//		{
-	//			tiefe += 1;
-	//			ptr = ptr->grosserbruder;
-	//		}
-	//		for (int i = 0; i < tiefe; i++)
-	//		{
-	//			std::cout << "++";
-	//		}
-	//		std::cout << ptr->data;
-
-	//	}
-	//}
-
-	//void ausgabeEinzel(int tiefe, BaumKot *&anker)
-	//{
-	//	BaumKot *ptr = anker;
-	//	for (int i = 0; i < tiefe; i++)
-	//	{
-	//		std::cout << "++";
-	//	}
-	//	std::cout << ptr->data;
-	//}
-
-	void ausgabeKnoten(BaumKot *knoten)
+	else if (ptr->data < wert)
 	{
-		if (knoten == nullptr)
+		if (ptr->grosserbruder != nullptr)
 		{
-			return;
+			einfuegen(ptr->grosserbruder, wert);
 		}
 		else
 		{
-			ausgabeKnoten(knoten->grosserbruder);
-			std::cout << knoten->data << std::endl;
-			ausgabeKnoten(knoten->kleinerbruder);
+			BaumKot *neuer_eintrag = new BaumKot;
+			neuer_eintrag->vater = ptr;
+			neuer_eintrag->data = wert;
+			neuer_eintrag->kleinerbruder = nullptr;
+			neuer_eintrag->grosserbruder = nullptr;
+			ptr->grosserbruder = neuer_eintrag;
 		}
 	}
+}
 
-	void ausgabe(BaumKot *anker)
+void ausgabeKnoten(BaumKot *knoten, int aktuelleTiefe)
+{
+	if (knoten == nullptr)
 	{
-		BaumKot *ptr = anker;
-		if (anker == nullptr)
+		return;
+	}
+	else
+	{
+		// Die Kinderknoten bekommen Tiefe+1.
+		ausgabeKnoten(knoten->grosserbruder, aktuelleTiefe+1);
+
+		// Entsprechend der aktuellen Tiefe sternchen hinzufügen.
+		for (int i = 0; i < aktuelleTiefe; i++)
 		{
-			std::cout << "Leerer Baum." << std::endl;
+			std::cout << "**";
 		}
-		else
-		{
-			ausgabeKnoten(anker);
-		}
+		std::cout << knoten->data << std::endl;
+
+		// Die Kinderknoten bekommen Tiefe+1.
+		ausgabeKnoten(knoten->kleinerbruder, aktuelleTiefe+1);
+	}
+}
+
+void ausgabe(BaumKot *anker)
+{
+	BaumKot *ptr = anker;
+	if (anker == nullptr)
+	{
+		std::cout << "Leerer Baum." << std::endl;
+	}
+	else
+	{
+		// Der oberste Vaterknoten ist tiefe 0.
+		ausgabeKnoten(anker, 0);
 	}
 }
